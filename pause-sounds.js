@@ -28,6 +28,21 @@ Hooks.once("init", () => {
         filePicker: "audio",
         default: "modules/custom-pause-sounds/ogg/Unpause.ogg"
     });
+
+    // Volume Setting
+    game.settings.register("custom-pause-sounds", "soundVolume", {
+        name: "Volume",
+        hint: "The volume (0 to 1) that you want the sound played at.",
+        scope: "world",
+        config: true,
+        type: Number,
+        range: {
+            min: 0.0,
+            max: 1.0,
+            step: 0.05
+        },
+        default: 0.5
+    });
 });
 
 // Watch for the pause state changing (happens via Spacebar OR UI Click)
@@ -41,12 +56,13 @@ Hooks.on("pauseGame", (paused) => {
 
     // Pick which sound to use based on the incoming state.
     const selectedSound = paused ? pauseSound : unpauseSound;
+    const volumeSetting = game.settings.get("custom-pause-sounds", "soundVolume");
 
     // Play the sound to everyone.
     if (selectedSound) {
         foundry.audio.AudioHelper.play({
             src: selectedSound,
-            volume: 0.8,
+            volume: volumeSetting,
             loop: false
         }, true); // Setting this second argument to `true` pushes the sound to all players
     }
