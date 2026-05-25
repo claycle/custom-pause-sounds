@@ -3,6 +3,7 @@
     "title": "Custom Pause Sounds",
     "description": "Overrides the default spacebar pause behavior to play custom sounds for pausing and unpausing.",
     "version": "1.0.0",
+    "manifest": "https://github.com/claycle/custom-pause-sounds/releases/latest/download/module.json",
     "authors": [{
         "name": "Claycle"
     }],
