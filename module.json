@@ -1,0 +1,16 @@
+{
+    "id": "custom-pause-sounds",
+    "title": "Custom Pause Sounds",
+    "description": "Overrides the default spacebar pause behavior to play custom sounds for pausing and unpausing.",
+    "version": "1.0.0",
+    "authors": [{
+        "name": "Claycle"
+    }],
+    "compatibility": {
+        "minimum": "13",
+        "verified": "13"
+    },
+    "esmodules": [
+        "pause-sounds.js"
+    ]
+}
