@@ -15,7 +15,7 @@ Hooks.once("init", () => {
         config: true,
         type: String,
         filePicker: "audio",
-        default: ""
+        default: "modules/custom-pause-sounds/ogg/Pause.ogg"
     });
 
     // Unpause Settings
@@ -26,58 +26,34 @@ Hooks.once("init", () => {
         config: true,
         type: String,
         filePicker: "audio",
-        default: ""
-    });
-
-    // Override the default keybinding
-    game.keybindings.register("custom-pause-sounds", "audioTogglePause", {
-        name: "Audio Toggle Pause Override",
-        hint: "Toggles the game pause state using spacebar and runs Custom Pause Sounds.",
-        editable: [
-            { key: "Space" }
-        ],
-        onDown: () => {
-            // Are you the GM? If not, return.
-            if (!game.user.isGM) return;
-
-            // Get the sound files from settings.
-            const pauseSound = game.settings.get("custom-pause-sounds", "pauseSoundPath");
-            const unpauseSound = game.settings.get("custom-pause-sounds", "unpauseSoundPath");
-
-            // Pick which sound to use based on the state we will going to.
-            const targetPauseState = !game.paused;
-            const selectedSound = targetPauseState ? pauseSound : unpauseSound;
-
-            // Pause everyone.
-            game.togglePause(targetPauseState, { broadcast: true });
-
-            // Play the sound to everyone.
-            if (selectedSound) {
-                foundry.audio.AudioHelper.play({
-                    src: selectedSound,
-                    volume: 0.8,
-                    loop: false
-                }, true); // Setting this second argument to `true` pushes the sound to all players
-            }
-
-            return true; // Done.
-        },
-        precedence: CONST.KEYBINDING_PRECEDENCE.PRIORITY
+        default: "modules/custom-pause-sounds/ogg/Unpause.ogg"
     });
 });
 
-// Set everything up, announce we are ready-to-go.
-Hooks.once("ready", () => {
-    // In Foundry's API, .get() returns the KeybindingActionBinding[] array directly
-    const corePauseBindings = game.keybindings.get("core", "pause");
+// Watch for the pause state changing (happens via Spacebar OR UI Click)
+Hooks.on("pauseGame", (paused) => {
+    // Only the GM should initiate the broadcast sound trigger
+    if (!game.user.isGM) return;
 
-    if (corePauseBindings && Array.isArray(corePauseBindings)) {
-        // Filter out any standalone "Space" bindings from the default rule
-        const filteredBindings = corePauseBindings.filter(b => b.key !== "Space");
+    // Get the sound files from settings.
+    const pauseSound = game.settings.get("custom-pause-sounds", "pauseSoundPath");
+    const unpauseSound = game.settings.get("custom-pause-sounds", "unpauseSoundPath");
 
-        // Re-assign the cleaned array back to the core pause action to save it
-        game.keybindings.set("core", "pause", filteredBindings);
+    // Pick which sound to use based on the incoming state.
+    const selectedSound = paused ? pauseSound : unpauseSound;
+
+    // Play the sound to everyone.
+    if (selectedSound) {
+        foundry.audio.AudioHelper.play({
+            src: selectedSound,
+            volume: 0.8,
+            loop: false
+        }, true); // Setting this second argument to `true` pushes the sound to all players
     }
+});
+
+// Announce we are ready-to-go.
+Hooks.once("ready", () => {
     const moduleVersion = game.modules.get("custom-pause-sounds")?.version || "unknown";
     console.log(`Custom Pause Sounds v${moduleVersion} | Module is ready and active!`);
 });
