@@ -71,5 +71,5 @@ Hooks.on("pauseGame", (paused) => {
 // Announce we are ready-to-go.
 Hooks.once("ready", () => {
     const moduleVersion = game.modules.get("custom-pause-sounds")?.version || "unknown";
-    console.log(`Custom Pause Sounds v${moduleVersion} | Module is ready and active!`);
+    console.log(`Custom Pause Sounds v${moduleVersion}`);
 });
