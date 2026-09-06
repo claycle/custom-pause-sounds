@@ -29,6 +29,31 @@ Hooks.once("init", () => {
         default: "modules/custom-pause-sounds/ogg/Unpause.ogg"
     });
 
+    // Enter Settings
+    game.settings.register("custom-pause-sounds", "enterSoundPath", {
+        name: "Player Enters Sound",
+        hint: "The audio file played when a player enters the game.",
+        scope: "world",
+        config: true,
+        type: String,
+        filePicker: "audio",
+        default: "modules/custom-pause-sounds/ogg/Enter.ogg"
+    });
+
+    // Leave Settings
+    game.settings.register("custom-pause-sounds", "leaveSoundPath", {
+        name: "Player Leaves Sound",
+        hint: "The audio file played when a player leaves the game.",
+        scope: "world",
+        config: true,
+        type: String,
+        filePicker: "audio",
+        default: "modules/custom-pause-sounds/ogg/Leave.ogg"
+    });
+
+
+
+
     // Volume Setting
     game.settings.register("custom-pause-sounds", "soundVolume", {
         name: "Volume",
@@ -67,6 +92,33 @@ Hooks.on("pauseGame", (paused) => {
         }, true); // Setting this second argument to `true` pushes the sound to all players
     }
 });
+
+
+// Register the hook when Foundry is initialized or ready
+Hooks.on("userConnected", (user, connected) => {
+    if (user.id === game.user.id) return;
+
+    // Get the sound files from settings.
+    const enterSound = game.settings.get("custom-pause-sounds", "enterSoundPath");
+    const leaveSound = game.settings.get("custom-pause-sounds", "leaveSoundPath");
+
+    // What am I going to play?
+    const soundPath = connected ?
+        enterSound // Path to join sound
+        :
+        leaveSound; // Path to leave sound
+
+    const volumeSetting = game.settings.get("custom-pause-sounds", "soundVolume");
+
+    if (soundPath) {
+        foundry.audio.AudioHelper.play({
+            src: soundPath,
+            volume: volumeSetting,
+            loop: false
+        }, true); // Setting this second argument to `true` pushes the sound to all players
+    }
+});
+
 
 // Announce we are ready-to-go.
 Hooks.once("ready", () => {
