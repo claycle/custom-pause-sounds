@@ -85,6 +85,7 @@ Hooks.on("pauseGame", (paused) => {
 
     // Play the sound to everyone.
     if (selectedSound) {
+        console.log("Custom Pause Sounds, Playing:", selectedSound);
         foundry.audio.AudioHelper.play({
             src: selectedSound,
             volume: volumeSetting,
@@ -111,6 +112,7 @@ Hooks.on("userConnected", (user, connected) => {
     const volumeSetting = game.settings.get("custom-pause-sounds", "soundVolume");
 
     if (soundPath) {
+        console.log("Custom Pause Sounds, Playing:", soundPath);
         foundry.audio.AudioHelper.play({
             src: soundPath,
             volume: volumeSetting,
